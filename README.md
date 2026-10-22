@@ -1,5 +1,4 @@
-
-Batch script that blocks common (what I've seen) remote software from installing or running. It uses Windows built in [AppLocker](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/applocker-overview).  
+Prevent common (what I've seen) remote software from installing or running. It uses Windows' built in [AppLocker](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/applocker-overview).  
 
 Blocks:
 - AnyDesk
