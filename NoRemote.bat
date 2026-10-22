@@ -1,6 +1,7 @@
 @echo off
+echo Building config
 setlocal enabledelayedexpansion
-net session >nul 2>&1 || (echo Run as administrator & exit /b 1)
+net session >nul 2>&1 || (echo Run as administrator & pause & exit /b 1)
 
 :: =============================================
 
@@ -31,6 +32,7 @@ for %%C in (Exe Msi) do (
 )
 >> "%XML%" echo ^</AppLockerPolicy^>
 
+echo Applying
 powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-AppLockerPolicy -XmlPolicy '%XML%'"
 if errorlevel 1 (echo Policy import failed & exit /b 1)
 
