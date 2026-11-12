@@ -1,0 +1,55 @@
+Remote             File                                   Organization                            Process                                                                          Service Name
+-------            ----                                   ------------                            --------------                                                                   -------------
+Ammyy Admin        AA_v3.exe                              Ammyy LLC                               AA_v3.exe
+Remote Utilities   agent-*.exe                            REMOTE UTILITIES PTE. LTD.              rfusclient.exe
+AnyViewer          AnyViewerSetup_*.exe                   AOMEI International Network Limited     AVCore.exe,RCClinet.exe,AnyViewer*.exe                                           RCService
+AnyViewer          AnyViewer_*.exe                        AOMEI International Network Limited     AVCore.exe,RCClinet.exe,AnyViewer*.exe                                           RCService
+AweSun             AweSun_*.exe                           上海贝锐信息科技股份有限公司              AweSun.exe,awesun_guard.exe                                                      AweSunService,AweSunService
+dwagent            dwagent.exe                            DWSNET s.r.l.                           dwagent.exe,dwagsvc.exe                                                          DWAgent
+getscreen.me       getscreen.exe                          POINT B LTD                             getscreen.exe
+HopToDesk          HopToDesk.exe                          Begonia Holdings LLC                    HopToDesk.exe                                                                    HopToDesk
+Remote Utilities   host-*.exe                             REMOTE UTILITIES PTE. LTD.              rfusclient.exe,rutserv.exe                                                       RManService
+Remote Utilities   host-*.msi                             REMOTE UTILITIES PTE. LTD.              rfusclient.exe,rutserv.exe                                                       RManService
+IperiusRemote      IperiusRemote_Setup.exe                ENTER S.R.L.                            IperiusRemote.exe,IperiusRemoteService.exe                                       IperiusService
+Jump Desktop       JumpDesktopConnect.exe                 PHASEFIVE SYSTEMS (L.L.C)               JumpConnect.exe                                                                  JumpConnect
+LogMeIn                                                   GoTo Technologies USA, LLC
+Mikogo             mikogo-starter.exe                     Snapview GmbH                           Mikogo-host.exe,Mikogo-Screen-Service.exe,Mikogo-Service.exe,Mikogo-video.exe    Mikogo-Service
+NoMachine          nomachine-personal-edition_*.exe       NoMachine S.à r.l                       nxd.exe,nxnode.bin,nxrunner.bin,nxserver.bin,nxservice64.exe                     nxservice
+Parsec             parsec-windows.exe                     Unity Technologies SF                   pservice.exe                                                                     Parsec
+Radmin             Radmin_Server_*.msi                    Famatech Corp.                          FamItrfc.Exe,rserver3.exe                                                        RServer3
+RemotePC           RemotePCHost.exe                       IDrive, Inc.                            RemotePCHostUI.exe,RemotePCService.exe,RPCDownloader.exe                         RPCService,HostService
+LiteManager        ROMServer.exe                          Yakhnovets Denis Aleksandrovich IP      Portable/Does not install. Uses download name
+RustDesk           rustdesk-*.exe                         PURSLANE                                Portable/Does not install. Uses rustdesk.exe
+ShowMyPC           ShowMyPC*.exe                          ShowMyPC INC                            SMPCSetup.exe
+SimpleHelp         SimpleHelp-install-64.exe              SimpleHelp Ltd                          SimpleHelp.exe,SimpleHelp Manager.exe                                            SimpleHelp Server
+Supremo            Supremo.exe                            Nanosystems S.r.l.                      Supremo.exe,SupremoHelper.exe,SupremoHelperX64.exe                               SupremoService
+N-able             TakeControlTechConsole-Stable.exe      N-ABLE TECHNOLOGIES LTD                 BAConsoleApp.exe,tkcuploader.exe
+TeamViewer         TeamViewerQS_x64.exe                   TeamViewer Germany GmbH                 TeamViewer.exe,TeamViewer_Service.exe,tv_w32.exe,tv_x64.exe                      TeamViewer
+TeamViewer         TeamViewer_Setup_x64.exe               TeamViewer Germany GmbH
+ToDesk             ToDesk_Installer.exe                   Hainan YouQu Technology Co., Ltd        ToDesk.exe                                                                       ToDesk_Service
+UltraViewer        UltraViewer_setup_*.exe                DUC FABULOUS CO.,LTD                    UltraViewer_Desktop.exe,UltraViewer_Service.exe,uv_x64.exe                       UltraViewService
+Remote Utilities   viewer-*.exe                           REMOTE UTILITIES PTE. LTD.
+Zoho               ZA_Access_My_Department.exe            ZOHO Corporation Private Limited
+Zoho               ZA_Access_My_Department.msi            ZOHO Corporation Private Limited        ZohoURS.exe,ZohoURSService.exe                                                   Zoho Assist-Unattended Support
+Zoho               zoho-assist-desktop-installer*.exe     ZOHO Corporation Private Limited        ZohoURS.exe,ZohoURSService.exe
+Zoho               QuickSupportAllUserLevelInstaller.msi  ZOHO Corporation Private Limited        QuickSupport.exe,Zoho Assist.exe
+
+
+
+
+
+IperiusRemote - Stop processes, then service
+
+
+
+
+Get-ChildItem "C:\Users\Sean\Downloads\*" -Include *.exe,*.msi -File | ForEach-Object {
+    $c = (Get-AuthenticodeSignature $_.FullName).SignerCertificate
+    $o = if (-not $c) { '(unsigned)' }
+         elseif ($c.Subject -match '(?:^|, )O=(?:"((?:[^"]|"")*)"|([^,]+))') { if ($Matches[1]) { $Matches[1] -replace '""','"' } else { $Matches[2] } }
+         else { '(no O field)' }
+    [pscustomobject]@{ File = $_.Name; Organization = $o }
+} | Format-Table -AutoSize
+
+
+
