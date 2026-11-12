@@ -2,12 +2,14 @@ Prevent remote software from installing. It uses Windows' built in [AppLocker](h
 If the remote program is already installed, AppLocker only prevents a few of them from running.
 
 ## Requirements
-Only works on Windows 10/11 Pro, Enterprise, Education.  
-Run as Admin.  
+- Only works on Windows 10/11 Pro, Enterprise, Education.  
+- Run as Admin.  
 
 ## Features
-Right click any of the running remotes to stop them all.  
-If ScreenConnect is installed, right click it - Remove > Will stop the program and remote the install folder (Untested at the moment)
+- Highlights running remotes, moves them to the top of the list  
+- Right click any of the running remotes to stop them all  
+- Right click ScreenConnect, option to Remove > Will stop the program and remote the install folder (Untested at the moment)  
+- Common: Select remote software commonly used in remote scams. (From what I've seen)  
 
 
 <img width="1063" height="629" alt="new" src="https://github.com/user-attachments/assets/1abec3dd-d563-41e1-b7f5-1f7262d67ff8" />
