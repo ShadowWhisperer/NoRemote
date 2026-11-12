@@ -1,0 +1,329 @@
+# NoRemote program list
+#   One [section] per program. Blank values are fine. Separate several values with ;
+#   common      yes = ticked by the "Common" button
+#   publishers  full AppLocker publisher string: O=NAME, L=..., S=..., C=...
+#               get it with: (Get-AppLockerFileInformation -Path file.exe).Publisher.PublisherName
+#   files       matched as *\name* in the file path (AppLocker deny rule) and as a process-name prefix
+#   processes   exact process image names (used by the running scan and Kill All)
+#   services    service names or display names (stopped by Kill All)
+#   firewall    exact exe paths to block in Windows Firewall
+
+[Action1]
+common     = no
+publishers = 
+files      = Action1
+processes  = 
+services   = 
+firewall   = 
+
+[Ammyy Admin]
+common     = no
+publishers = O=AMMYY LLC, S=MOSCOW, C=RU
+files      = Ammyy; AA_v3
+processes  = AA_v3.exe
+services   = 
+firewall   = 
+
+[AnyDesk]
+common     = yes
+publishers = 
+files      = AnyDesk
+processes  = 
+services   = 
+firewall   = 
+
+[AnyViewer]
+common     = no
+publishers = O=AOMEI INTERNATIONAL NETWORK LIMITED, L=KWUN TONG, S=KOWLOON, C=HK
+files      = AnyViewer; AVCore; RCClinet
+processes  = AVCore.exe; RCClinet.exe; RCService.exe
+services   = RCService
+firewall   = 
+
+[Atera]
+common     = no
+publishers = 
+files      = AteraAgent
+processes  = 
+services   = 
+firewall   = 
+
+[BeyondTrust / Bomgar]
+common     = no
+publishers = 
+files      = BeyondTrust; Bomgar
+processes  = 
+services   = 
+firewall   = 
+
+[ConnectWise / ScreenConnect]
+common     = yes
+publishers = 
+files      = ScreenConnect; ConnectWiseControl
+processes  = 
+services   = 
+firewall   = 
+
+[Dameware]
+common     = no
+publishers = 
+files      = DameWare; DWRCC; DWRCS
+processes  = 
+services   = 
+firewall   = 
+
+[Datto]
+common     = no
+publishers = 
+files      = CentraStage; AEMAgent
+processes  = 
+services   = 
+firewall   = 
+
+[DWService]
+common     = no
+publishers = O=DWSNET S.R.L., S=CAMPANIA, C=IT
+files      = dwagent; dwagsvc
+processes  = dwagent.exe; dwagsvc.exe
+services   = DWAgent
+firewall   = 
+
+[Getscreen]
+common     = no
+publishers = O=POINT B LTD, L=LIMASSOL, S=LIMASSOL, C=CY
+files      = getscreen
+processes  = getscreen.exe
+services   = 
+firewall   = 
+
+[GoToAssist / GoToMyPC]
+common     = no
+publishers = O=GOTO TECHNOLOGIES USA, LLC, L=BOSTON, S=MASSACHUSETTS, C=US
+files      = GoToAssist; GoToMyPC; GoToResolve; g2ax
+processes  = 
+services   = 
+firewall   = 
+
+[HopToDesk]
+common     = no
+publishers = O=BEGONIA HOLDINGS LLC, L=SHERIDAN, S=WYOMING, C=US
+files      = HopToDesk
+processes  = HopToDesk.exe
+services   = HopToDesk
+firewall   = 
+
+[Iperius Remote]
+common     = no
+publishers = O=ENTER S.R.L., L=GROTTAMMARE, S=ASCOLI PICENO, C=IT
+files      = IperiusRemote
+processes  = IperiusRemote.exe; IperiusRemoteService.exe
+services   = IperiusService
+firewall   = 
+
+[join.me]
+common     = no
+publishers = 
+files      = join.me
+processes  = 
+services   = 
+firewall   = 
+
+[Jump Desktop]
+common     = no
+publishers = O=PHASEFIVE SYSTEMS (L.L.C), L=DUBAI, C=AE
+files      = JumpConnect; JumpDesktop; Jump Desktop
+processes  = JumpConnect.exe
+services   = JumpConnect
+firewall   = 
+
+[Kaseya]
+common     = no
+publishers = 
+files      = Kaseya
+processes  = 
+services   = 
+firewall   = 
+
+[LiteManager]
+common     = no
+publishers = 
+files      = LiteManager; ROMServer; ROMViewer; ROMFUSClient
+processes  = 
+services   = 
+firewall   = 
+
+[LogMeIn]
+common     = no
+publishers = O=GOTO TECHNOLOGIES USA, LLC, L=BOSTON, S=MASSACHUSETTS, C=US
+files      = LogMeIn
+processes  = 
+services   = 
+firewall   = 
+
+[MeshCentral]
+common     = no
+publishers = 
+files      = MeshAgent
+processes  = 
+services   = 
+firewall   = 
+
+[Mikogo]
+common     = no
+publishers = O=SNAPVIEW GMBH, L=MUENCHEN, S=BAYERN, C=DE
+files      = Mikogo
+processes  = Mikogo-host.exe; Mikogo-Screen-Service.exe; Mikogo-Service.exe; Mikogo-video.exe
+services   = Mikogo-Service
+firewall   = 
+
+[N-able Take Control]
+common     = no
+publishers = O=N-ABLE TECHNOLOGIES LTD, L=DUNDEE, C=GB
+files      = BASup; BeAnywhere; TCRmtShell; BAConsoleApp; tkcuploader; TakeControl
+processes  = BAConsoleApp.exe; tkcuploader.exe
+services   = 
+firewall   = 
+
+[NinjaOne]
+common     = no
+publishers = 
+files      = NinjaRMMAgent
+processes  = 
+services   = 
+firewall   = 
+
+[NoMachine]
+common     = no
+publishers = O=NOMACHINE S.À R.L, L=LUXEMBOURG CITY, C=LU
+files      = NoMachine; nxd.exe; nxservice; nxnode; nxserver; nxrunner
+processes  = nxd.exe; nxnode.bin; nxrunner.bin; nxserver.bin; nxservice64.exe
+services   = nxservice
+firewall   = 
+
+[Parsec]
+common     = no
+publishers = O=UNITY TECHNOLOGIES SF, L=SAN FRANCISCO, S=CALIFORNIA, C=US
+files      = parsecd; parsec-windows; pservice
+processes  = parsecd.exe; pservice.exe
+services   = Parsec
+firewall   = 
+
+[Quick Assist]
+common     = yes
+publishers = 
+files      = 
+processes  = 
+services   = 
+firewall   = %SystemRoot%\System32\quickassist.exe
+
+[Radmin]
+common     = no
+publishers = O=FAMATECH CORP., L=ROAD TOWN, S=TORTOLA, C=VG
+files      = r_server; rserver3; Radmin; FamItrfc
+processes  = FamItrfc.exe; rserver3.exe
+services   = RServer3
+firewall   = 
+
+[Remote Assistance (msra)]
+common     = yes
+publishers = 
+files      = 
+processes  = 
+services   = 
+firewall   = %SystemRoot%\System32\msra.exe; %SystemRoot%\SysWOW64\msra.exe
+
+[Remote Utilities]
+common     = no
+publishers = O=REMOTE UTILITIES PTE. LTD., L=SINGAPORE, S=SINGAPORE, C=SG
+files      = rutserv; rfusclient
+processes  = rfusclient.exe; rutserv.exe
+services   = RManService
+firewall   = 
+
+[RemotePC]
+common     = no
+publishers = O=IDRIVE, INC., L=CALABASAS, S=CALIFORNIA, C=US
+files      = RemotePC; RPCService; RPCDownloader
+processes  = RemotePCHostUI.exe; RemotePCService.exe; RPCDownloader.exe; HostService.exe
+services   = RPCService; HostService
+firewall   = 
+
+[RustDesk]
+common     = no
+publishers = O=PURSLANE, S=NORTH WEST, C=SG
+files      = rustdesk
+processes  = rustdesk.exe
+services   = 
+firewall   = 
+
+[ShowMyPC]
+common     = no
+publishers = O=SHOWMYPC INC, S=CALIFORNIA, C=US
+files      = ShowMyPC; SMPCSetup
+processes  = SMPCSetup.exe
+services   = 
+firewall   = 
+
+[SimpleHelp]
+common     = no
+publishers = O=SIMPLEHELP LTD, S=MIDLOTHIAN, C=GB
+files      = SimpleHelp; JWrapper-Remote
+processes  = SimpleHelp.exe; SimpleHelp Manager.exe; SimpleService.exe
+services   = SimpleHelp Server
+firewall   = 
+
+[Splashtop]
+common     = yes
+publishers = 
+files      = Splashtop
+processes  = 
+services   = 
+firewall   = 
+
+[Sunlogin / AweSun]
+common     = no
+publishers = O=上海贝锐信息科技股份有限公司, S=上海市, C=CN
+files      = SunloginClient; AweSun; awesun_guard
+processes  = AweSun.exe; awesun_guard.exe
+services   = AweSunService
+firewall   = 
+
+[Supremo]
+common     = yes
+publishers = O=NANOSYSTEMS S.R.L., L=ASCOLI PICENO, S=ASCOLI PICENO, C=IT
+files      = Supremo
+processes  = Supremo.exe; SupremoHelper.exe; SupremoHelperX64.exe; SupremoService.exe
+services   = SupremoService
+firewall   = 
+
+[TeamViewer]
+common     = yes
+publishers = O=TEAMVIEWER GERMANY GMBH, L=GÖPPINGEN, C=DE
+files      = TeamViewer; tv_w32; tv_x64
+processes  = TeamViewer.exe; TeamViewer_Service.exe; tv_w32.exe; tv_x64.exe
+services   = TeamViewer
+firewall   = 
+
+[ToDesk]
+common     = no
+publishers = O=HAINAN YOUQU TECHNOLOGY CO., LTD, L=HAIKOU, S=HAINAN, C=CN
+files      = ToDesk
+processes  = ToDesk.exe
+services   = ToDesk_Service
+firewall   = 
+
+[UltraViewer]
+common     = yes
+publishers = O=DUC FABULOUS CO.,LTD, L=HANOI, C=VN
+files      = UltraViewer; uv_x64
+processes  = UltraViewer_Desktop.exe; UltraViewer_Service.exe; uv_x64.exe
+services   = UltraViewService
+firewall   = 
+
+[Zoho Assist]
+common     = no
+publishers = O=ZOHO CORPORATION PRIVATE LIMITED, L=CHENNAI, S=TAMIL NADU, C=IN
+files      = ZohoAssist; Zoho Assist; ZohoURS; QuickSupport; ZA_Access
+processes  = ZohoURS.exe; ZohoURSService.exe; QuickSupport.exe; Zoho Assist.exe
+services   = Zoho Assist-Unattended Support
+firewall   =
