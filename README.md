@@ -1,6 +1,8 @@
 Prevent remote software from installing. It uses Windows' built in [AppLocker](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/app-control-for-business/applocker/applocker-overview).  
 If the remote program is already installed, AppLocker only prevents a few of them from running.
 
+[Download](https://github.com/ShadowWhisperer/NoRemote/releases/latest/download/NoRemote.exe)  
+
 ## Requirements
 - Only works on Windows 10/11 Pro, Enterprise, Education.  
 - Run as Admin.  
