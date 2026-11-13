@@ -2,11 +2,11 @@
 #   One [section] per program. Blank values are fine. Separate several values with ;
 #   common      yes = ticked by the "Common" button
 #   publishers  full AppLocker publisher string: O=NAME, L=..., S=..., C=...
-#               get it with: (Get-AppLockerFileInformation -Path file.exe).Publisher.PublisherName
 #   files       matched as *\name* in the file path (AppLocker deny rule) and as a process-name prefix
-#   processes   exact process image names (used by the running scan and Kill All)
-#   services    service names or display names (stopped by Kill All)
+#   processes   process image names, * wildcard allowed (used by the running scan and Kill All)
+#   services    service names or display names, * wildcard allowed (used by the running scan and Kill All)
 #   firewall    exact exe paths to block in Windows Firewall
+
 
 [Action1]
 common     = no
@@ -58,10 +58,10 @@ firewall   =
 
 [ConnectWise / ScreenConnect]
 common     = yes
-publishers = 
+publishers = O=CONNECTWISE, LLC, L=TAMPA, S=FLORIDA, C=US
 files      = ScreenConnect; ConnectWiseControl
-processes  = 
-services   = 
+processes  = ScreenConnect*
+services   = ScreenConnect*
 firewall   = 
 
 [Dameware]
@@ -96,7 +96,7 @@ processes  = getscreen.exe
 services   = 
 firewall   = 
 
-[GoToAssist / GoToMyPC]
+[GoTo (GoToAssist / GoToMyPC)]
 common     = no
 publishers = O=GOTO TECHNOLOGIES USA, LLC, L=BOSTON, S=MASSACHUSETTS, C=US
 files      = GoToAssist; GoToMyPC; GoToResolve; g2ax
