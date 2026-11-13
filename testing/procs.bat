@@ -111,9 +111,11 @@ if not "%%a"=="SearchIndexer.exe" (
 if not "%%a"=="SearchProtocolHost.exe" (
 if not "%%a"=="spoolsv.exe" (
 if not "%%a"=="msiexec.exe" (
+if not "%%a"=="HostService.exe" (
+if not "%%a"=="SystemSettingsBroker.exe" (
 
 echo %%a
-))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 
 echo.
 echo.
