@@ -24,4 +24,4 @@ If the remote program is already installed, AppLocker only prevents a few of the
 
 ## Notes
 - Script replaces the whole AppLocker policy. All existing rules get removed.  
-- This does not a block every remote program.
+- This does not block every remote program.
