@@ -149,7 +149,7 @@ $script:MatchedPids = @{}  # program name -> process IDs that matched
 function Get-RunningMap {
     $ErrorActionPreference = 'SilentlyContinue'
     $procs = @(Get-CimInstance Win32_Process | ForEach-Object { [pscustomobject]@{ N = [string]$_.Name; P = [string]$_.ExecutablePath; ID = [int]$_.ProcessId } })
-    $svc = @(Get-CimInstance Win32_Service -Filter "State='Running'" | ForEach-Object { [pscustomobject]@{ P = [string]$_.PathName; ID = [int]$_.ProcessId } })
+    $svc = @(Get-CimInstance Win32_Service -Filter "State='Running'" | ForEach-Object { [pscustomobject]@{ P = [string]$_.PathName; ID = [int]$_.ProcessId; SN = [string]$_.Name; DN = [string]$_.DisplayName } })
     $map = @{}
     $script:Matched = @{}
     $script:MatchedPids = @{}
@@ -165,7 +165,15 @@ function Get-RunningMap {
             }
         }
         foreach ($pn in $p.Proc) {
-            foreach ($x in $procs) { if ($x.N -ieq $pn) { $names += $x.N; $ids += $x.ID } }
+            foreach ($x in $procs) { if ($x.N -like $pn) { $names += $x.N; $ids += $x.ID } }
+        }
+        foreach ($sn in $p.Svc) {
+            foreach ($v in $svc) {
+                if ($v.SN -like $sn -or $v.DN -like $sn) {
+                    if ($v.ID -gt 0) { $ids += $v.ID }
+                    if ($v.P -match '^\s*"?([^"]*?\.exe)') { $names += [System.IO.Path]::GetFileName($Matches[1]) }
+                }
+            }
         }
         foreach ($w in $p.Fw) {
             $leaf = [System.IO.Path]::GetFileName($w)
@@ -188,7 +196,7 @@ function Show-Info([string]$Text,[string]$Icon='Information') {
 $script:Loading = $true
 $script:SavedChecks = @{}
 $form = New-Object System.Windows.Forms.Form
-$form.Text = 'NoRemote v1'; $form.StartPosition = 'CenterScreen'
+$form.Text = 'NoRemote v1.1'; $form.StartPosition = 'CenterScreen'
 $form.ClientSize = New-Object System.Drawing.Size(360,560)
 $form.FormBorderStyle = 'Sizable'; $form.MaximizeBox = $false; $form.ShowIcon = $false
 # Height resizable, width fixed
@@ -292,8 +300,14 @@ $list.Add_MouseUp({
 })
 function Stop-ProgramServices($Progs) {
     # fire and forget: send "net stop" for every listed service (name or display name) and do not wait
+    $all = @(Get-CimInstance Win32_Service -Filter "State='Running'" -ErrorAction SilentlyContinue)
     foreach ($p in $Progs) {
+        $targets = @()
         foreach ($sn in @($p.Svc)) {
+            if ($sn -match '[*?]') { $targets += @($all | Where-Object { $_.Name -like $sn -or $_.DisplayName -like $sn } | ForEach-Object { $_.Name }) }
+            else { $targets += $sn }
+        }
+        foreach ($sn in ($targets | Sort-Object -Unique)) {
             try {
                 $psi = New-Object System.Diagnostics.ProcessStartInfo
                 $psi.FileName = 'net.exe'; $psi.Arguments = 'stop "' + $sn + '" /y'
@@ -375,6 +389,15 @@ function Get-ScreenConnectTargets {
     foreach ($p in @(Get-CimInstance Win32_Process)) {
         if ([string]$p.ExecutablePath -match $script:ScPattern) { $exeDirs += (Split-Path -Parent $p.ExecutablePath) }
     }
+    # MSI products (product code from the registry; Win32_Product is far too slow)
+    $products = @()
+    foreach ($k in 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*') {
+        foreach ($e in @(Get-ItemProperty -Path $k)) {
+            if (([string]$e.DisplayName -match '^(ScreenConnect|ConnectWise ?Control)') -and ([string]$e.PSChildName -match '^\{[0-9A-Fa-f-]{36}\}$')) {
+                $products += [pscustomobject]@{ Name = [string]$e.DisplayName; Code = [string]$e.PSChildName }
+            }
+        }
+    }
     $delete = @(); $skipped = @()
     foreach ($d in ($exeDirs | Where-Object { $_ } | Sort-Object -Unique)) {
         $root = Get-SafePurgeRoot $d
@@ -383,7 +406,23 @@ function Get-ScreenConnectTargets {
     # drop folders that sit inside another folder already on the list
     $delete = @($delete | Sort-Object -Unique)
     $delete = @($delete | Where-Object { $x = $_; -not ($delete | Where-Object { $_ -ne $x -and $x.StartsWith($_ + '\', [System.StringComparison]::OrdinalIgnoreCase) }) })
-    [pscustomobject]@{ Services = @($svc | Sort-Object -Unique); Delete = $delete; Skipped = @($skipped | Sort-Object -Unique) }
+    [pscustomobject]@{ Services = @($svc | Sort-Object -Unique); Products = @($products); Delete = $delete; Skipped = @($skipped | Sort-Object -Unique) }
+}
+
+function Uninstall-ScreenConnect($Targets) {
+    # msiexec /x per product code, silent, wait up to 2 minutes each. Returns failure messages.
+    $fail = @()
+    foreach ($pr in $Targets.Products) {
+        try {
+            $psi = New-Object System.Diagnostics.ProcessStartInfo
+            $psi.FileName = 'msiexec.exe'; $psi.Arguments = '/x ' + $pr.Code + ' /qn /norestart'
+            $psi.UseShellExecute = $false; $psi.CreateNoWindow = $true
+            $p = [System.Diagnostics.Process]::Start($psi)
+            if (-not $p.WaitForExit(120000)) { $fail += ('Uninstall timed out: ' + $pr.Name); continue }
+            if (@(0, 1605, 1641, 3010) -notcontains $p.ExitCode) { $fail += ('Uninstall failed (exit ' + $p.ExitCode + '): ' + $pr.Name) }
+        } catch { $fail += ('Uninstall error: ' + $pr.Name + ' : ' + $_.Exception.Message) }
+    }
+    $fail
 }
 
 function Stop-ScreenConnect($Targets) {
@@ -408,6 +447,33 @@ function Stop-ScreenConnect($Targets) {
     }
 }
 
+function Show-PurgeDialog([string]$Text) {
+    # custom Yes/No dialog: no icon, centered buttons
+    $dlg = New-Object System.Windows.Forms.Form
+    $dlg.Text = 'Purge ScreenConnect'; $dlg.StartPosition = 'CenterParent'
+    $dlg.FormBorderStyle = 'FixedDialog'; $dlg.MaximizeBox = $false; $dlg.MinimizeBox = $false
+    $dlg.ShowIcon = $false; $dlg.ShowInTaskbar = $false
+    $dlg.Font = [System.Drawing.SystemFonts]::MessageBoxFont
+    $lbl = New-Object System.Windows.Forms.Label
+    $lbl.AutoSize = $true; $lbl.MaximumSize = New-Object System.Drawing.Size(560,0)
+    $lbl.Location = New-Object System.Drawing.Point(20,20); $lbl.Text = $Text
+    $dlg.Controls.Add($lbl)
+    $w = [Math]::Max($lbl.PreferredSize.Width + 40, 240)
+    $y = $lbl.Location.Y + $lbl.PreferredSize.Height + 20
+    $bw = 80; $gap = 10
+    $x = [int](($w - (2 * $bw + $gap)) / 2)
+    $yes = New-Object System.Windows.Forms.Button
+    $yes.Text = 'Yes'; $yes.DialogResult = 'Yes'; $yes.Size = New-Object System.Drawing.Size($bw,26); $yes.Location = New-Object System.Drawing.Point($x,$y)
+    $no = New-Object System.Windows.Forms.Button
+    $no.Text = 'No'; $no.DialogResult = 'No'; $no.Size = New-Object System.Drawing.Size($bw,26); $no.Location = New-Object System.Drawing.Point(($x + $bw + $gap),$y)
+    $dlg.Controls.Add($yes); $dlg.Controls.Add($no)
+    $dlg.AcceptButton = $yes; $dlg.CancelButton = $no
+    $dlg.ClientSize = New-Object System.Drawing.Size($w, ($y + 26 + 20))
+    $res = $dlg.ShowDialog($form)
+    $dlg.Dispose()
+    return [string]$res
+}
+
 $miPurge.Add_Click({
     $ErrorActionPreference = 'Continue'
     $form.Cursor = 'WaitCursor'
@@ -415,20 +481,22 @@ $miPurge.Add_Click({
     try {
         $t = Get-ScreenConnectTargets
         if ($t.Delete.Count -gt 0 -or $t.Skipped.Count -gt 0) {
-            $msg = "Purge ConnectWise / ScreenConnect?`n`nServices: " + ($(if ($t.Services.Count) { $t.Services -join ', ' } else { '(none)' }))
-            $msg += "`n`nFolders that will be DELETED:`n - " + ($(if ($t.Delete.Count) { $t.Delete -join "`n - " } else { '(none)' }))
+            $msg = "Services:`n    " + ($(if ($t.Services.Count) { $t.Services -join "`n    " } else { '(none)' }))
+            $msg += "`n`nFolders:`n - " + ($(if ($t.Delete.Count) { $t.Delete -join "`n - " } else { '(none)' }))
             if ($t.Skipped.Count -gt 0) { $msg += "`n`nUnrecognized locations (NOT deleted):`n - " + ($t.Skipped -join "`n - ") }
-            $ans = [System.Windows.Forms.MessageBox]::Show($msg + "`n`nContinue?", 'NoRemote - Purge', 'YesNo', 'Warning')
+            $ans = Show-PurgeDialog $msg
             if ($ans -ne 'Yes') { return }
         }
-        foreach ($pass in 1..2) {                 # stop services and processes, then again
+        $failed += @(Uninstall-ScreenConnect $t)  # uninstall first (stops the service, removes registry entries)
+        foreach ($pass in 1..2) {                 # then stop leftover services and processes, twice
             Stop-ScreenConnect $t
             Start-Sleep -Milliseconds 1500
         }
         foreach ($d in $t.Delete) {
+            if (-not (Test-Path -LiteralPath $d)) { continue }   # uninstall already removed it
             foreach ($try in 1..2) {
                 try { Remove-Item -LiteralPath $d -Recurse -Force -ErrorAction Stop; break }
-                catch { if ($try -eq 1) { Stop-ScreenConnect $t; Start-Sleep -Milliseconds 1500 } else { $failed += ($d + ' : ' + $_.Exception.Message) } }
+                catch { if (-not (Test-Path -LiteralPath $d)) { break }; if ($try -eq 1) { Stop-ScreenConnect $t; Start-Sleep -Milliseconds 1500 } else { $failed += ($d + ' : ' + $_.Exception.Message) } }
             }
         }
         $script:Running = Get-RunningMap
@@ -438,7 +506,7 @@ $miPurge.Add_Click({
     finally { $form.Cursor = 'Default' }
     $notes = @()
     if ($t -and $t.Skipped.Count -gt 0) { $notes += ("Not deleted (unrecognized location):`n - " + ($t.Skipped -join "`n - ")) }
-    if ($failed.Count -gt 0) { $notes += ("Could not delete:`n - " + ($failed -join "`n - ")) }
+    if ($failed.Count -gt 0) { $notes += ("Failed:`n - " + ($failed -join "`n - ")) }
     if ($notes.Count -gt 0) { Show-Info ($notes -join "`n`n") 'Warning' }
 })
 
