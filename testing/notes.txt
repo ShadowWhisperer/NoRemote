@@ -20,6 +20,7 @@ Radmin             Radmin_Server_*.msi                    Famatech Corp.        
 RemotePC           RemotePCHost.exe                       IDrive, Inc.                            RemotePCHostUI.exe,RemotePCService.exe,RPCDownloader.exe                         RPCService,HostService
 LiteManager        ROMServer.exe                          Yakhnovets Denis Aleksandrovich IP      Portable/Does not install. Uses download name
 RustDesk           rustdesk-*.exe                         PURSLANE                                Portable/Does not install. Uses rustdesk.exe
+ScreenConnect      ScreenConnect.ClientSetup.exe          ConnectWise, LLC                        ScreenConnect.ClientService.exe,ScreenConnect.WindowsClient.exe                  ScreenConnect Client*
 ShowMyPC           ShowMyPC*.exe                          ShowMyPC INC                            SMPCSetup.exe
 SimpleHelp         SimpleHelp-install-64.exe              SimpleHelp Ltd                          SimpleHelp.exe,SimpleHelp Manager.exe                                            SimpleHelp Server
 Supremo            Supremo.exe                            Nanosystems S.r.l.                      Supremo.exe,SupremoHelper.exe,SupremoHelperX64.exe                               SupremoService
@@ -42,14 +43,7 @@ IperiusRemote - Stop processes, then service
 
 
 
-
 Get-ChildItem "C:\Users\Sean\Downloads\*" -Include *.exe,*.msi -File | ForEach-Object {
-    $c = (Get-AuthenticodeSignature $_.FullName).SignerCertificate
-    $o = if (-not $c) { '(unsigned)' }
-         elseif ($c.Subject -match '(?:^|, )O=(?:"((?:[^"]|"")*)"|([^,]+))') { if ($Matches[1]) { $Matches[1] -replace '""','"' } else { $Matches[2] } }
-         else { '(no O field)' }
-    [pscustomobject]@{ File = $_.Name; Organization = $o }
-} | Format-Table -AutoSize
-
-
-
+    $p = try { (Get-AppLockerFileInformation -Path $_.FullName -ErrorAction Stop).Publisher.PublisherName } catch { $null }
+    [pscustomobject]@{ File = $_.Name; Publisher = $(if ($p) { $p } else { '(unsigned)' }) }
+} | Format-Table -AutoSize -Wrap
