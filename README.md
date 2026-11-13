@@ -5,7 +5,7 @@ If the remote program is already installed, AppLocker only prevents a few of the
 [Download](https://github.com/ShadowWhisperer/NoRemote/releases/latest/download/NoRemote.exe)  
 
 
-<img width="1063" height="629" alt="new" src="https://github.com/user-attachments/assets/1abec3dd-d563-41e1-b7f5-1f7262d67ff8" />
+<img width="872" height="635" alt="new" src="https://github.com/user-attachments/assets/e5c9b9e4-e5ae-4c64-8aa1-1f94005386e2" />
 <br/><br>
 
 
