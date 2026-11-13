@@ -16,7 +16,7 @@ If the remote program is already installed, AppLocker only prevents a few of the
 ## Features
 - Highlights running remotes, moves them to the top of the list  
 - Right click any of the running remotes to stop them all  
-- Right click ScreenConnect, option to Remove > Will stop the program and remote the install folder (Untested at the moment)  
+- Right click ScreenConnect, option to Remove > Will kill it, run the uninstaller, and delete the folder that is was running from.  
 - Common: Select remote software commonly used in remote scams. (From what I've seen)  
 
 **Rules:** `secpol.msc` > Application Control Policies > AppLocker  
